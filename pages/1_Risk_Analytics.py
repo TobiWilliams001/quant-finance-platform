@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.data_fetcher import DataFetcher
 from utils.risk_analytics import RiskAnalytics
 from utils.report_generator import ReportGenerator
+from utils.database import get_db_manager
 
 # Configure page
 st.set_page_config(
@@ -26,15 +27,30 @@ st.markdown("---")
 data_fetcher = DataFetcher()
 risk_analyzer = RiskAnalytics()
 report_generator = ReportGenerator()
+db_manager = get_db_manager()
 
 # Sidebar for parameters
 st.sidebar.title("📊 Risk Analysis Parameters")
 
+# Database status indicator
+if db_manager.initialized:
+    st.sidebar.success("🗄️ Database: Connected")
+else:
+    st.sidebar.warning("🗄️ Database: Offline")
+
+# Check for sample analysis setup
+use_sample_data = st.session_state.get('run_sample_analysis', False)
+
 # Portfolio selection
 st.sidebar.subheader("Portfolio Selection")
+if use_sample_data and 'sample_symbols' in st.session_state:
+    default_symbols = '\n'.join(st.session_state.sample_symbols)
+else:
+    default_symbols = "AAPL\nGOOGL\nMSFT\nTSLA\nAMZN"
+
 symbols_input = st.sidebar.text_area(
     "Enter stock symbols (one per line)",
-    value="AAPL\nGOOGL\nMSFT\nTSLA\nAMZN",
+    value=default_symbols,
     height=120,
     help="Enter stock symbols separated by new lines"
 )
@@ -42,10 +58,15 @@ symbols_input = st.sidebar.text_area(
 symbols = [symbol.strip().upper() for symbol in symbols_input.strip().split('\n') if symbol.strip()]
 
 # Time period
+if use_sample_data and 'sample_period' in st.session_state:
+    default_period_index = ["1y", "2y", "3y", "5y", "max"].index(st.session_state.sample_period)
+else:
+    default_period_index = 0
+    
 period = st.sidebar.selectbox(
     "Analysis Period",
     ["1y", "2y", "3y", "5y", "max"],
-    index=0,
+    index=default_period_index,
     help="Time period for historical data analysis"
 )
 
@@ -74,33 +95,55 @@ else:
 
 # Risk parameters
 st.sidebar.subheader("Risk Parameters")
+if use_sample_data and 'sample_confidence' in st.session_state:
+    default_confidence = st.session_state.sample_confidence
+else:
+    default_confidence = [0.95, 0.99]
+    
 confidence_levels = st.sidebar.multiselect(
     "VaR Confidence Levels",
     [0.90, 0.95, 0.99],
-    default=[0.95, 0.99]
+    default=default_confidence
 )
 
+if use_sample_data and 'sample_risk_free_rate' in st.session_state:
+    default_risk_free = st.session_state.sample_risk_free_rate * 100
+else:
+    default_risk_free = 2.0
+    
 risk_free_rate = st.sidebar.number_input(
     "Risk-Free Rate (%)",
     min_value=0.0,
     max_value=10.0,
-    value=2.0,
+    value=default_risk_free,
     step=0.1,
     format="%.2f"
 ) / 100
 
 # Benchmark selection
+if use_sample_data and 'sample_benchmark' in st.session_state:
+    benchmark_options = ["None", "^GSPC", "^IXIC", "^DJI", "^TNX"]
+    default_benchmark_index = benchmark_options.index(st.session_state.sample_benchmark) if st.session_state.sample_benchmark in benchmark_options else 1
+else:
+    default_benchmark_index = 1
+    
 benchmark_symbol = st.sidebar.selectbox(
     "Benchmark (optional)",
     ["None", "^GSPC", "^IXIC", "^DJI", "^TNX"],
-    index=1,
+    index=default_benchmark_index,
     help="Select a benchmark for comparison"
 )
 
 # Analysis button
 run_analysis = st.sidebar.button("🔍 Run Risk Analysis", type="primary")
 
-if run_analysis and symbols:
+# Auto-run for sample analysis or manual trigger
+should_run_analysis = (run_analysis and symbols) or (use_sample_data and symbols)
+
+if should_run_analysis:
+    # Clear sample analysis flag to prevent auto-rerun
+    if 'run_sample_analysis' in st.session_state:
+        del st.session_state.run_sample_analysis
     try:
         with st.spinner("Fetching market data and performing risk analysis..."):
             # Validate symbols
@@ -135,19 +178,35 @@ if run_analysis and symbols:
             benchmark_returns = None
             if benchmark_symbol != "None":
                 try:
-                    benchmark_data = data_fetcher.fetch_stock_data(benchmark_symbol, period)
-                    if not benchmark_data.empty:
+                    with st.spinner(f"Fetching benchmark data ({benchmark_symbol})..."):
+                        benchmark_data = data_fetcher.fetch_stock_data(benchmark_symbol, period)
+                        
+                    if not benchmark_data.empty and len(benchmark_data) > 10:
                         benchmark_returns = benchmark_data['Close'].pct_change().dropna()
-                        # Align with portfolio returns
-                        aligned_data = pd.concat([portfolio_returns, benchmark_returns], axis=1).dropna()
-                        if len(aligned_data) > 0:
-                            portfolio_returns = aligned_data.iloc[:, 0]
-                            benchmark_returns = aligned_data.iloc[:, 1]
-                            # Recalculate portfolio prices
-                            portfolio_prices = (1 + portfolio_returns).cumprod() * initial_value
-                except Exception:
+                        
+                        # Ensure we have enough data points
+                        if len(benchmark_returns) > 10:
+                            # Align with portfolio returns
+                            aligned_data = pd.concat([portfolio_returns, benchmark_returns], axis=1).dropna()
+                            if len(aligned_data) > 10:
+                                portfolio_returns = aligned_data.iloc[:, 0]
+                                benchmark_returns = aligned_data.iloc[:, 1]
+                                # Recalculate portfolio prices
+                                portfolio_prices = (1 + portfolio_returns).cumprod() * initial_value
+                                st.success(f"✅ Benchmark data ({benchmark_symbol}) loaded successfully!")
+                            else:
+                                benchmark_returns = None
+                                st.warning(f"⚠️ Insufficient overlapping data between portfolio and benchmark ({benchmark_symbol}). Proceeding without benchmark comparison.")
+                        else:
+                            benchmark_returns = None
+                            st.warning(f"⚠️ Insufficient benchmark data points for {benchmark_symbol}. Proceeding without benchmark comparison.")
+                    else:
+                        benchmark_returns = None
+                        st.warning(f"⚠️ Unable to fetch sufficient benchmark data for {benchmark_symbol}. Proceeding without benchmark comparison.")
+                        
+                except Exception as e:
                     benchmark_returns = None
-                    st.warning("Unable to fetch benchmark data. Proceeding without benchmark comparison.")
+                    st.warning(f"⚠️ Error fetching benchmark data for {benchmark_symbol}: {str(e)}. Proceeding without benchmark comparison.")
             
             # Perform comprehensive risk analysis
             risk_report = risk_analyzer.comprehensive_risk_report(
@@ -157,8 +216,49 @@ if run_analysis and symbols:
                 risk_free_rate=risk_free_rate
             )
             
-            # Display results
-            st.success("✅ Risk analysis completed successfully!")
+            # Save analysis results to database
+            if db_manager.initialized:
+                try:
+                    # Prepare analysis parameters
+                    analysis_params = {
+                        'symbols': symbols,
+                        'period': period,
+                        'weights': weights,
+                        'confidence_levels': confidence_levels,
+                        'risk_free_rate': risk_free_rate,
+                        'benchmark': benchmark_symbol,
+                        'equal_weights': equal_weights
+                    }
+                    
+                    # Save analysis history
+                    db_manager.save_analysis_history(
+                        analysis_type='risk',
+                        symbols=symbols,
+                        parameters=analysis_params,
+                        results=risk_report,
+                        success=True
+                    )
+                    
+                    # Save portfolio snapshot
+                    portfolio_name = f"Risk Analysis - {', '.join(symbols[:3])}{'...' if len(symbols) > 3 else ''}"
+                    db_manager.save_portfolio_snapshot(
+                        portfolio_name=portfolio_name,
+                        symbols=symbols,
+                        weights=weights,
+                        returns_data=returns_data,
+                        risk_metrics=risk_report,
+                        benchmark=benchmark_symbol if benchmark_symbol != "None" else None,
+                        period=period
+                    )
+                    
+                    st.success("✅ Risk analysis completed and saved to database!")
+                    
+                except Exception as db_error:
+                    st.warning(f"⚠️ Analysis completed but database save failed: {str(db_error)}")
+                    st.success("✅ Risk analysis completed successfully!")
+            else:
+                st.success("✅ Risk analysis completed successfully!")
+                st.info("💡 Enable database features to save analysis history")
             
             # Key metrics overview
             col1, col2, col3, col4 = st.columns(4)
@@ -415,42 +515,70 @@ if run_analysis and symbols:
             # Export functionality
             st.subheader("📄 Export Results")
             
+            # Initialize session state for exports
+            if 'pdf_generated' not in st.session_state:
+                st.session_state.pdf_generated = False
+            if 'csv_generated' not in st.session_state:
+                st.session_state.csv_generated = False
+            
             col1, col2 = st.columns(2)
             
             with col1:
-                if st.button("📋 Generate PDF Report"):
+                # Generate PDF button
+                if st.button("📋 Generate PDF Report", key="generate_pdf_btn"):
                     with st.spinner("Generating PDF report..."):
-                        pdf_bytes = report_generator.generate_risk_analytics_report(
-                            risk_report, 
-                            f"Portfolio ({', '.join(symbols[:3])}{'...' if len(symbols) > 3 else ''})"
-                        )
-                        
-                        st.download_button(
-                            label="⬇️ Download PDF Report",
-                            data=pdf_bytes,
-                            file_name=f"risk_analytics_report_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.pdf",
-                            mime="application/pdf"
-                        )
+                        try:
+                            portfolio_name = f"Portfolio ({', '.join(symbols[:3])}{'...' if len(symbols) > 3 else ''})"
+                            st.session_state.pdf_bytes = report_generator.generate_risk_analytics_report(
+                                risk_report, portfolio_name
+                            )
+                            st.session_state.pdf_filename = f"risk_analytics_report_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+                            st.session_state.pdf_generated = True
+                            st.success("✅ PDF report generated successfully!")
+                        except Exception as e:
+                            st.error(f"Error generating PDF: {str(e)}")
+                
+                # Show download button if PDF is generated
+                if st.session_state.pdf_generated and hasattr(st.session_state, 'pdf_bytes'):
+                    st.download_button(
+                        label="⬇️ Download PDF Report",
+                        data=st.session_state.pdf_bytes,
+                        file_name=st.session_state.pdf_filename,
+                        mime="application/pdf",
+                        key="download_pdf_btn"
+                    )
             
             with col2:
-                if st.button("📊 Export Data to CSV"):
-                    csv_data = {
-                        'portfolio_returns': pd.DataFrame({'returns': portfolio_returns}),
-                        'portfolio_prices': pd.DataFrame({'prices': portfolio_prices}),
-                        'weights': pd.DataFrame(list(weights.items()), columns=['Symbol', 'Weight'])
-                    }
-                    
-                    if benchmark_returns is not None:
-                        csv_data['benchmark_returns'] = pd.DataFrame({'benchmark_returns': benchmark_returns})
-                    
-                    csv_files = report_generator.export_data_to_csv(csv_data, "risk_analytics")
-                    
-                    for filename, csv_bytes in csv_files.items():
+                # Generate CSV button
+                if st.button("📊 Export Data to CSV", key="generate_csv_btn"):
+                    with st.spinner("Preparing CSV export..."):
+                        try:
+                            csv_data = {
+                                'portfolio_returns': pd.DataFrame({'date': portfolio_returns.index, 'returns': portfolio_returns.values}),
+                                'portfolio_prices': pd.DataFrame({'date': portfolio_prices.index, 'prices': portfolio_prices.values}),
+                                'weights': pd.DataFrame(list(weights.items()), columns=['Symbol', 'Weight'])
+                            }
+                            
+                            if benchmark_returns is not None:
+                                csv_data['benchmark_returns'] = pd.DataFrame({'date': benchmark_returns.index, 'benchmark_returns': benchmark_returns.values})
+                            
+                            st.session_state.csv_files = report_generator.export_data_to_csv(csv_data, "risk_analytics")
+                            st.session_state.csv_generated = True
+                            st.success("✅ CSV files generated successfully!")
+                        except Exception as e:
+                            st.error(f"Error generating CSV: {str(e)}")
+                
+                # Show download buttons if CSV is generated
+                if st.session_state.csv_generated and hasattr(st.session_state, 'csv_files'):
+                    for i, (filename, csv_bytes) in enumerate(st.session_state.csv_files.items()):
+                        display_name = filename.split('_')[2:-2]  # Extract meaningful part of filename
+                        display_name = ' '.join(display_name).title() if display_name else filename
                         st.download_button(
-                            label=f"⬇️ Download {filename}",
+                            label=f"⬇️ Download {display_name}",
                             data=csv_bytes,
                             file_name=filename,
-                            mime="text/csv"
+                            mime="text/csv",
+                            key=f"download_csv_btn_{i}"
                         )
     
     except Exception as e:
@@ -490,4 +618,11 @@ else:
     
     # Sample analysis example
     if st.button("🔬 Try Sample Analysis"):
+        # Set up sample data in session state
+        st.session_state.sample_symbols = ["AAPL", "GOOGL", "MSFT", "TSLA", "NVDA"]
+        st.session_state.sample_period = "2y"
+        st.session_state.sample_confidence = [0.95, 0.99]
+        st.session_state.sample_risk_free_rate = 0.025
+        st.session_state.sample_benchmark = "^GSPC"
+        st.session_state.run_sample_analysis = True
         st.rerun()
