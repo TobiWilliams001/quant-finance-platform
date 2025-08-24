@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantrisk"
+version = "0.1.0"
+description = "Quantitative Finance Analytics Platform"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.3.2",
+    "openpyxl>=3.1.5",
+    "pandas>=2.3.2",
+    "plotly>=6.3.0",
+    "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.1.1",
+    "reportlab>=4.4.3",
+    "scikit-learn>=1.7.1",
+    "scipy>=1.16.1",
+    "sqlalchemy>=2.0.43",
+    "statsmodels>=0.14.5",
+    "streamlit>=1.48.1",
+    "yfinance>=0.2.65",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["utils*"]
+exclude = ["pages*", "attached_assets*", "tests*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.md", "*.yml", "*.yaml"]

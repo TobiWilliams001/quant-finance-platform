@@ -5,28 +5,81 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "quantrisk"
 version = "0.1.0"
-description = "Quantitative Finance Analytics Platform"
+description = "Professional-grade quantitative finance analytics platform"
+readme = "README.md"
 requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@domain.com"},
+]
+keywords = ["finance", "quantitative", "risk", "portfolio", "analytics"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+
 dependencies = [
     "numpy>=2.3.2",
     "openpyxl>=3.1.5",
     "pandas>=2.3.2",
     "plotly>=6.3.0",
-    "psycopg2-binary>=2.9.10",
     "python-dotenv>=1.1.1",
     "reportlab>=4.4.3",
     "scikit-learn>=1.7.1",
     "scipy>=1.16.1",
-    "sqlalchemy>=2.0.43",
     "statsmodels>=0.14.5",
     "streamlit>=1.48.1",
     "yfinance>=0.2.65",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["utils*"]
-exclude = ["pages*", "attached_assets*", "tests*"]
+where = ["src"]
 
 [tool.setuptools.package-data]
-"*" = ["*.txt", "*.md", "*.yml", "*.yaml"]
+quantrisk = ["py.typed"]
+
+# Black configuration
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+# isort configuration  
+[tool.isort]
+profile = "black"
+src_paths = ["src", "streamlit_app", "tests"]
+
+# MyPy configuration
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "yfinance.*",
+    "plotly.*", 
+    "streamlit.*",
+    "reportlab.*",
+]
+ignore_missing_imports = true
+
+# Pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
