@@ -11,3 +11,4 @@ sqlalchemy>=2.0.43
 statsmodels>=0.14.5
 streamlit>=1.48.1
 yfinance>=0.2.65
+kaleido>=0.2.1

@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "Your Name", email = "your.email@domain.com"},
+    {name = "Tobi Williams", email = "tobi.williams@domain.com"},
 ]
 keywords = ["finance", "quantitative", "risk", "portfolio", "analytics"]
 classifiers = [
@@ -34,6 +34,9 @@ dependencies = [
     "streamlit>=1.48.1",
     "yfinance>=0.2.65",
     "pydantic>=2.0.0",
+    "sqlalchemy>=2.0.43",
+    "psycopg2-binary>=2.9.10",
+    "kaleido>=0.2.1",
 ]
 
 [project.optional-dependencies]
@@ -61,7 +64,7 @@ target-version = ['py311']
 # isort configuration  
 [tool.isort]
 profile = "black"
-src_paths = ["src", "streamlit_app", "tests"]
+src_paths = ["src", "tests"]
 
 # MyPy configuration
 [tool.mypy]

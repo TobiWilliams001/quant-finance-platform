@@ -2,6 +2,6 @@
 Data handling and fetching modules.
 """
 
-from . import fetcher, database
+from . import database, fetcher
 
 __all__ = ["fetcher", "database"]
