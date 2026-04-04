@@ -9,7 +9,7 @@ from quantrisk.data.fetcher import DataFetcher
 # Configure page
 st.set_page_config(
     page_title="Quantitative Finance Analytics Platform",
-    page_icon="📈",
+    page_icon="�",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -39,7 +39,7 @@ st.markdown(
 
 def main():
     st.markdown(
-        '<h1 class="main-header">🏦 Quantitative Finance Analytics Platform</h1>',
+        '<h1 class="main-header">Quantitative Finance Analytics Platform</h1>',
         unsafe_allow_html=True,
     )
 
@@ -50,11 +50,11 @@ def main():
     """)
 
     # Sidebar navigation
-    st.sidebar.title("📊 Analytics Dashboard")
+    st.sidebar.title("Analytics Dashboard")
     st.sidebar.markdown("---")
 
     # Quick market overview
-    st.subheader("📈 Market Overview")
+    st.subheader("Market Overview")
 
     try:
         data_fetcher = DataFetcher()
@@ -99,13 +99,13 @@ def main():
     st.markdown("---")
 
     # Platform features
-    st.subheader("🛠️ Platform Features")
+    st.subheader("Platform Features")
 
     col1, col2 = st.columns(2)
 
     with col1:
         st.markdown("""
-        #### 📊 Risk Analytics
+        #### Risk Analytics
         - Value at Risk (VaR) at 95% & 99% confidence
         - Conditional VaR for tail risk assessment
         - Sharpe ratio and risk-adjusted returns
@@ -114,7 +114,7 @@ def main():
         """)
 
         st.markdown("""
-        #### 💼 Portfolio Optimization
+        #### Portfolio Optimization
         - Efficient frontier visualization
         - Mean-variance optimization
         - Sharpe ratio maximization
@@ -124,7 +124,7 @@ def main():
 
     with col2:
         st.markdown("""
-        #### 🎯 Options Pricing
+        #### Options Pricing
         - Black-Scholes valuation
         - Complete Greeks calculation
         - Sensitivity analysis
@@ -133,7 +133,7 @@ def main():
         """)
 
         st.markdown("""
-        #### 🔄 Pairs Trading
+        #### Pairs Trading
         - Cointegration testing
         - Hedge ratio calculation
         - Z-score monitoring
@@ -144,7 +144,7 @@ def main():
     st.markdown("---")
 
     # Quick start guide
-    st.subheader("🚀 Quick Start Guide")
+    st.subheader("Quick Start Guide")
 
     st.markdown("""
     1. **Risk Analytics**: Navigate to analyze portfolio risk metrics and VaR calculations
