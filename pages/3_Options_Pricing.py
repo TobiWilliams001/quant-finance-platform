@@ -11,9 +11,9 @@ from quantrisk.data.fetcher import DataFetcher
 from quantrisk.utils.reports import ReportGenerator
 
 # Configure page
-st.set_page_config(page_title="Options Pricing", page_icon="🎯", layout="wide")
+st.set_page_config(page_title="Options Pricing", page_icon="📊", layout="wide")
 
-st.title("🎯 Options Pricing & Greeks Analysis")
+st.title("Options Pricing & Greeks Analysis")
 st.markdown("---")
 
 # Initialize classes
@@ -22,7 +22,7 @@ bs_model = BlackScholesModel()
 report_generator = ReportGenerator()
 
 # Sidebar for parameters
-st.sidebar.title("⚙️ Option Parameters")
+st.sidebar.title("Option Parameters")
 
 # Option specifications
 st.sidebar.subheader("Option Specifications")
