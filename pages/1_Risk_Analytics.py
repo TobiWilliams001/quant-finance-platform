@@ -11,9 +11,9 @@ from quantrisk.data.fetcher import DataFetcher
 from quantrisk.utils.reports import ReportGenerator
 
 # Configure page
-st.set_page_config(page_title="Risk Analytics", page_icon="⚠️", layout="wide")
+st.set_page_config(page_title="Risk Analytics", page_icon="📊", layout="wide")
 
-st.title("⚠️ Risk Analytics")
+st.title("Risk Analytics")
 st.markdown("---")
 
 # Initialize classes
@@ -23,13 +23,13 @@ report_generator = ReportGenerator()
 db_manager = get_db_manager()
 
 # Sidebar for parameters
-st.sidebar.title("📊 Risk Analysis Parameters")
+st.sidebar.title("Risk Analysis Parameters")
 
 # Database status indicator
 if db_manager.initialized:
-    st.sidebar.success("🗄️ Database: Connected")
+    st.sidebar.success("Database: Connected")
 else:
-    st.sidebar.warning("🗄️ Database: Offline")
+    st.sidebar.warning("Database: Offline")
 
 # Check for sample analysis setup
 use_sample_data = st.session_state.get("run_sample_analysis", False)
