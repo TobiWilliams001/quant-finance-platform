@@ -6,9 +6,9 @@ A comprehensive Streamlit-based application that implements sophisticated financ
 
 ![Platform Overview](https://img.shields.io/badge/Python-3.11+-blue.svg) ![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg) ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-## 🚀 Features & Capabilities
+## Features & Capabilities
 
-### 📊 Risk Analytics
+### Risk Analytics
 - **Value at Risk (VaR)** calculations at multiple confidence levels (90%, 95%, 99%)
 - **Conditional Value at Risk (CVaR)** for tail risk assessment  
 - **Maximum Drawdown** analysis with time series visualization
@@ -16,41 +16,41 @@ A comprehensive Streamlit-based application that implements sophisticated financ
 - **Distribution Analysis** including skewness, kurtosis, and normality tests
 - **Benchmark Comparison** with beta, tracking error, and information ratio
 
-### 💼 Portfolio Optimization  
+### Portfolio Optimization  
 - **Modern Portfolio Theory** implementation with efficient frontier
 - **Sharpe Ratio Maximization** for optimal risk-adjusted returns
 - **Minimum Volatility** portfolios for conservative strategies
 - **Correlation Analysis** with interactive correlation heatmaps
 - **Risk-Return Visualization** with scatter plots and efficient frontiers
 
-### 🎯 Options Pricing
+### Options Pricing
 - **Black-Scholes-Merton Model** for European options valuation
 - **Complete Greeks Calculation**: Delta, Gamma, Theta, Vega, Rho
 - **Sensitivity Analysis** for parameter impact assessment
 - **Moneyness Classification** (ITM, ATM, OTM)
 - **Time Decay Visualization** and volatility impact analysis
 
-### 🎲 Monte Carlo Simulations
+### Monte Carlo Simulations
 - **Geometric Brownian Motion** for price path simulation
 - **Jump Diffusion Models** for extreme event modeling
 - **Mean Reversion Processes** for interest rate modeling
 - **Portfolio Performance Simulation** with confidence intervals
 - **Options Pricing via Monte Carlo** methods
 
-### 🔄 Pairs Trading
+### Pairs Trading
 - **Cointegration Testing** using Engle-Granger methodology
 - **Hedge Ratio Calculation** via Ordinary Least Squares regression
 - **Z-Score Monitoring** for real-time spread analysis
 - **Signal Generation** for automated entry/exit points
 - **Backtesting Framework** for strategy validation
 
-### 📄 Professional Reporting
+### Professional Reporting
 - **PDF Report Generation** with institutional-grade formatting
 - **CSV Data Export** for all analysis results and calculations
 - **Excel Integration** via openpyxl for structured exports
 - **Interactive Visualizations** using Plotly for charts and graphs
 
-## 🛠️ Technical Architecture
+## Technical Architecture
 
 ### Frontend Framework
 - **Streamlit**: Multi-page application with professional UI/UX
@@ -70,7 +70,7 @@ A comprehensive Streamlit-based application that implements sophisticated financ
 - **statsmodels**: Advanced statistical modeling
 - **scipy.stats**: Statistical distributions and tests
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before installation, ensure you have the following:
 
@@ -80,7 +80,7 @@ Before installation, ensure you have the following:
 - **8GB+ RAM** recommended for large portfolio analysis
 - **Internet connection** for real-time market data
 
-## 🔧 Installation & Setup
+## Installation & Setup
 
 ### Option 1: Local Installation
 
@@ -167,7 +167,7 @@ sqlalchemy>=2.0.0
 python-dotenv>=1.0.0
 ```
 
-## 🚀 Quick Start Guide
+## Quick Start Guide
 
 ### 1. Risk Analytics Module
 - Navigate to **Risk Analytics** page
@@ -256,7 +256,7 @@ For data persistence and historical analysis storage:
    python scripts/init_database.py
    ```
 
-## 📊 Data Sources
+## Data Sources
 
 ### Primary Data Provider
 - **Yahoo Finance API**: Real-time and historical market data
@@ -269,7 +269,7 @@ For data persistence and historical analysis storage:
 - **Quandl**: Economic and financial datasets
 - **FRED**: Federal Reserve economic data
 
-## 🎯 Use Cases
+## Use Cases
 
 ### For Students & Educators
 - **Learning Tool**: Understand quantitative finance concepts
@@ -334,7 +334,7 @@ pytest tests/test_risk_analytics.py
 - Mathematical formulas and derivations
 - Example usage and code samples
 
-## ⚠️ Important Notes
+## Important Notes
 
 ### Disclaimer
 This platform is for educational and research purposes. All financial calculations are provided "as-is" without warranty. Users should not rely solely on this software for investment decisions. Always consult with qualified financial professionals before making investment choices.
@@ -366,7 +366,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - PDF generation powered by [ReportLab](https://www.reportlab.com/)
 - Financial calculations based on established academic research
 
-## 📈 Roadmap
+## Roadmap
 
 ### Version 2.0 (Upcoming)
 - **Real-time Portfolio Tracking**: Live P&L monitoring
