@@ -8,41 +8,41 @@ import streamlit as st
 from quantrisk.data.database import get_db_manager, initialize_database
 
 # Configure page
-st.set_page_config(page_title="Database Administration", page_icon="🗄️", layout="wide")
+st.set_page_config(page_title="Database Administration", page_icon="�", layout="wide")
 
-st.title("🗄️ Database Administration")
+st.title("Database Administration")
 st.markdown("---")
 
 # Initialize database manager
 db_manager = get_db_manager()
 
 # Sidebar controls
-st.sidebar.title("🔧 Database Controls")
+st.sidebar.title("Database Controls")
 
 # Initialize database
-if st.sidebar.button("🚀 Initialize Database"):
+if st.sidebar.button("Initialize Database"):
     with st.spinner("Initializing database..."):
         success = initialize_database()
         if success:
-            st.sidebar.success("✅ Database initialized successfully!")
+            st.sidebar.success("Database initialized successfully!")
         else:
-            st.sidebar.error("❌ Failed to initialize database")
+            st.sidebar.error("Failed to initialize database")
 
 # Cleanup cache
-if st.sidebar.button("🧹 Cleanup Cache"):
+if st.sidebar.button("Cleanup Cache"):
     if db_manager.initialized:
         with st.spinner("Cleaning up expired cache entries..."):
             success = db_manager.cleanup_expired_cache()
             if success:
-                st.sidebar.success("✅ Cache cleanup completed!")
+                st.sidebar.success("Cache cleanup completed!")
             else:
-                st.sidebar.error("❌ Failed to cleanup cache")
+                st.sidebar.error("Failed to cleanup cache")
     else:
         st.sidebar.warning("Database not initialized")
 
 # Main content
 if not db_manager.initialized:
-    st.error("🚫 Database not initialized or connection failed")
+    st.error("Database not initialized or connection failed")
     st.info("""
     **To enable database features:**
     1. Ensure PostgreSQL is running
