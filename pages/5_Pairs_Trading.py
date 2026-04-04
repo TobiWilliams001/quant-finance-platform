@@ -9,9 +9,9 @@ from quantrisk.data.fetcher import DataFetcher
 from quantrisk.utils.reports import ReportGenerator
 
 # Configure page
-st.set_page_config(page_title="Pairs Trading", page_icon="🔄", layout="wide")
+st.set_page_config(page_title="Pairs Trading", page_icon="�", layout="wide")
 
-st.title("🔄 Pairs Trading & Statistical Arbitrage")
+st.title("Pairs Trading & Statistical Arbitrage")
 st.markdown("---")
 
 # Initialize classes
@@ -20,7 +20,7 @@ pairs_analyzer = PairsTrading()
 report_generator = ReportGenerator()
 
 # Sidebar for parameters
-st.sidebar.title("🔄 Pairs Trading Parameters")
+st.sidebar.title("Pairs Trading Parameters")
 
 # Asset pair selection
 st.sidebar.subheader("Asset Pair Selection")
