@@ -11,9 +11,9 @@ from quantrisk.data.fetcher import DataFetcher
 from quantrisk.utils.reports import ReportGenerator
 
 # Configure page
-st.set_page_config(page_title="Monte Carlo Simulation", page_icon="🎲", layout="wide")
+st.set_page_config(page_title="Monte Carlo Simulation", page_icon="📊", layout="wide")
 
-st.title("🎲 Monte Carlo Simulation")
+st.title("Monte Carlo Simulation")
 st.markdown("---")
 
 # Initialize classes
@@ -24,7 +24,7 @@ risk_analyzer = RiskAnalytics()
 report_generator = ReportGenerator()
 
 # Sidebar for parameters
-st.sidebar.title("🎲 Simulation Parameters")
+st.sidebar.title("Simulation Parameters")
 
 # Simulation type
 simulation_type = st.sidebar.selectbox(
