@@ -13,7 +13,7 @@ from quantrisk.utils.reports import ReportGenerator
 # Configure page
 st.set_page_config(page_title="Portfolio Optimization", page_icon="📊", layout="wide")
 
-st.title("📊 Portfolio Optimization")
+st.title("Portfolio Optimization")
 st.markdown("---")
 
 # Initialize classes
@@ -22,7 +22,7 @@ risk_analyzer = RiskAnalytics()
 report_generator = ReportGenerator()
 
 # Sidebar for parameters
-st.sidebar.title("⚙️ Optimization Parameters")
+st.sidebar.title("Optimization Parameters")
 
 # Asset selection
 st.sidebar.subheader("Asset Universe")
