@@ -42,3 +42,7 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Build metadata and tool output
+*.egg-info/
+flake8_output.txt
